@@ -80,10 +80,25 @@ def execute_plan_and_render(
 
     # Render answer text
     table_text = render_table_or_rows(rows, cols, lang, max_rows=10)
-    
-    # If template contains placeholders, attempt substitution
     body = template
-    if "{table}" in template:
+    
+    # Check if query touches actual exchange tables or is an explicit out-of-data signal
+    tables = ["deals", "contracts", "participants", "brokers", "usd_rates"]
+    touches_tables = any(re.search(rf"\b{t}\b", sql, re.IGNORECASE) for t in tables)
+    
+    if template.startswith("NO_DATA") or not touches_tables or "WHERE 1=0" in sql:
+        clean_reason = ""
+        if ":" in template:
+            clean_reason = template.split(":", 1)[1].strip()
+        elif plan_desc and plan_desc != "NO_DATA" and not plan_desc.startswith("SELECT"):
+            clean_reason = plan_desc
+
+        if lang == "uz":
+            body = f"Ma'lumotlar bazasida bu savolga javob yo'q." + (f" ({clean_reason})" if clean_reason else " (Savol UZEX birja savdolari ma'lumotlar to'plami doirasidan tashqarida).")
+        else:
+            body = f"В базе данных нет ответа на этот вопрос." + (f" ({clean_reason})" if clean_reason else " (Запрос находится за рамками данных биржевых торгов UZEX).")
+    # If template contains placeholders, attempt substitution
+    elif "{table}" in template:
         body = template.replace("{table}", table_text)
     elif "{rows}" in template:
         body = template.replace("{rows}", table_text)
