@@ -250,7 +250,7 @@ def ask_agent(question: str, session_id: str = "default", no_cache: bool = False
     if is_cache_enabled:
         cached = get_cached_result(question, lang)
         if cached:
-            latency_ms = int((time.time() - t0) * 1000)
+            latency_ms = max(1, int((time.time() - t0) * 1000))
             return {
                 "answer": cached["answer"],
                 "sql": cached["sql"],

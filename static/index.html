@@ -415,6 +415,7 @@
     loader.style.display = 'block';
     resBox.style.display = 'none';
 
+    const reqStart = performance.now();
     try {
       const resp = await fetch('/api/ask', {
         method: 'POST',
@@ -423,11 +424,13 @@
       });
 
       const data = await resp.json();
+      const clientMs = Math.round(performance.now() - reqStart);
       loader.style.display = 'none';
       btn.disabled = false;
 
       if (resp.ok) {
-        document.getElementById('badge-lat').innerText = data.latency_ms + ' ms';
+        const displayMs = (data.latency_ms && data.latency_ms > 0) ? data.latency_ms : Math.max(1, clientMs);
+        document.getElementById('badge-lat').innerText = displayMs + ' ms';
         document.getElementById('badge-grounded').innerText = data.grounded ? '100% Grounded' : 'Unverified';
         document.getElementById('badge-lang').innerText = (data.lang || currentLang).toUpperCase();
         document.getElementById('res-content').innerHTML = formatMarkdown(data.answer);
