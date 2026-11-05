@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  uzex-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: uzex-spot-agent:latest
+    container_name: uzex_agent_app
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - LLM_MODELS=${LLM_MODELS:-gemini:gemini-2.5-flash}
+      - UZEX_DB_PATH=/app/data/uzex.db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    volumes:
+      # Optional: bind mount logs to host
+      - ./data/logs:/app/data/logs

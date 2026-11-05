@@ -1,0 +1,9 @@
+# NOTES.md — Architecture & Engineering Decisions
+
+1. **Database Path & Engine**: Normalized SQLite database located by default at `data/uzex.db` (overrideable via `UZEX_DB_PATH` or `C:\uzex_work\uzex.db` if OneDrive file locks occur). WAL mode enabled for fast concurrent read access.
+2. **Deterministic Calculations**: Zero calculation by LLM. All volumes (`quantity * lot`), unit prices (`amount / volume`), export UZS values (`amount * rate`), and delivery delay flags (`delivery_date > payment_date + delivery_days`) are precalculated into indexed SQLite columns during DB build.
+3. **Product Matching**: All 40 TN VED codes are canonicalized in `app/dictionaries.py` with Russian, Uzbek Latin, Uzbek Cyrillic, and synonyms. Entity resolution extracts TN VED code from text before calling SQL or LLM.
+4. **Company Resolution**: INN has highest priority (exact 9-digit match). If text name is provided, normalized transliterated Latin keys (`name_key_latin`) are matched via RapidFuzz. If ambiguous (<27 pairs), all matching candidates with INN are returned.
+5. **Language & Out-of-Data Policy**: Output language strictly matches user query language (Uzbek or Russian). If query is out of coverage (dates outside 2022-01-03..2026-10-30, commodities like gold, director names, forecasts, non-existent deal IDs), an explicit, polite "Not in dataset" explanation is returned without inventing any entity.
+6. **SQL Guard & Grounding**: Read-only SQLite connection (`file:...mode=ro`), strict AST/regex SELECT-only check, banned DDL/DML/PRAGMA keywords, 20s timeout, automatic `LIMIT 1000`. Grounding verifier verifies every number, date, and entity in generated text exists in SQL output rows.
+7. **LLM Chain & Local Fallback**: Primary provider is Google GenAI (`google-genai` / `gemini-2.5-flash`), configurable fallback chain `LLM_MODELS`, plus deterministic SQL pattern matching fallback for zero-hallucination reliability even when offline or rate-limited.

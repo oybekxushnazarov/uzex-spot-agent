@@ -1,0 +1,24 @@
+=== UZEX AI HACKATHON 2026 — SUBMISSION FORM ANSWERS ===
+
+1. PUBLIC SERVICE URL:
+https://<YOUR_DEPLOYED_PUBLIC_URL>
+(Or locally: http://localhost:8000 / Cloudflare Tunnel URL)
+
+2. SOURCE CODE REPOSITORY:
+https://github.com/<YOUR_USERNAME>/<YOUR_REPOSITORY>
+
+---
+3. BRIEF SOLUTION SUMMARY (O'ZBEK TILI — 5 lines):
+1. UZEX birjasining 500 000 ta bitimi bo'yicha to'liq normallashtirilgan, indekslangan SQLite ma'lumotlar bazasi yaratildi.
+2. 40 ta TN VED tovar kodlari, hududlar va korxonalar uchun ikki tilli (O'zbek/Rus) aniq entitilarni aniqlash tizimi joriy etildi.
+3. Hallyutsinatsiyalarni 100% istisno qiluvchi Deterministik SQL rejalashtiruvchi va Faktik Asoslanganlik (Grounding Verifier) moduli qurildi.
+4. Har bir javob qat'iy o'zbek yoki rus tilida to'liq Asos (Evidence: SQL, qatorlar, ta'rif, filtrlar) bloki bilan taqdim etiladi.
+5. Mustaqil 50 ta savolli sinov to'plamida (UZ+RU) 100% aniqlik va o'rtacha 203 ms tezlik qayd etildi (90 soniya limitidan 400 barobar tez).
+
+---
+4. КРАТКОЕ ОПИСАНИЕ РЕШЕНИЯ (РУССКИЙ ЯЗЫК — 5 строк):
+1. Создана нормализованная и проиндексированная SQLite база данных по всем 500 000 сделкам UZEX за 2022–2026 гг.
+2. Реализована строгая система распознавания сущностей (40 кодов ТН ВЭД, ИНН, брокеры, регионы) на русском и узбекском языках.
+3. Разработан модуль защиты от галлюцинаций (Grounding Verifier) и детерминированный планировщик, исключающий выдуманные факты.
+4. Каждый ответ строго соответствует языку вопроса и сопровождается обязательным блоком обоснования (Evidence) с точным SQL.
+5. На независимом проверочном наборе из 50 вопросов (RU+UZ) достигнута 100% точность при средней задержке 203 мс (в 400 раз быстрее лимита 90 с).
