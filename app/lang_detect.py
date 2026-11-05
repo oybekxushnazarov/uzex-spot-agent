@@ -91,14 +91,15 @@ def detect_language(text: str) -> str:
     if uz_lat_matches > 0 or uz_cyr_matches > 0:
         return "uz"
         
-    # Check Russian characters
+    # Check character alphabets
     ru_chars = len(re.findall(r"[а-яё]", t))
     lat_chars = len(re.findall(r"[a-z]", t))
     
-    if ru_chars > lat_chars:
-        return "ru"
-    elif lat_chars > ru_chars and uz_lat_matches > 0:
+    # In Uzbekistan, Latin alphabet text is ALWAYS Uzbek Latin (Russian is never written in Latin)
+    if lat_chars > 0 and lat_chars >= ru_chars:
         return "uz"
         
-    # Default to Russian if mostly Cyrillic, otherwise check for Latin Uzbek words
-    return "ru"
+    if ru_chars > lat_chars:
+        return "ru"
+        
+    return "uz"

@@ -50,6 +50,7 @@ class AskRequest(BaseModel):
     question: str = Field(..., max_length=2000, description="Question in Uzbek or Russian")
     session_id: Optional[str] = Field("default", description="Session ID for conversational memory")
     no_cache: Optional[bool] = Field(False, description="Whether to bypass pipeline cache")
+    lang: Optional[str] = Field(None, description="Optional language preference ('uz' or 'ru')")
 
 
 class AskResponse(BaseModel):
@@ -82,7 +83,8 @@ async def api_ask(req: AskRequest, request: Request):
     res = ask_agent(
         question=req.question,
         session_id=req.session_id or "default",
-        no_cache=bool(req.no_cache)
+        no_cache=bool(req.no_cache),
+        lang_hint=req.lang
     )
     return AskResponse(
         answer=res["answer"],

@@ -186,7 +186,7 @@ def execute_plan_and_render(
     }
 
 
-def ask_agent(question: str, session_id: str = "default", no_cache: bool = False) -> dict[str, Any]:
+def ask_agent(question: str, session_id: str = "default", no_cache: bool = False, lang_hint: Optional[str] = None) -> dict[str, Any]:
     """
     Main entry point for answering user queries.
     Pipeline:
@@ -223,7 +223,10 @@ def ask_agent(question: str, session_id: str = "default", no_cache: bool = False
         }
         
     # 2. Language Detection
-    lang = detect_language(question)
+    if lang_hint in ("uz", "ru"):
+        lang = lang_hint
+    else:
+        lang = detect_language(question)
     
     # 3. Prompt injection detection
     is_injection = check_injection(question)
